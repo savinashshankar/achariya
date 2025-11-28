@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, CheckSquare, BarChart2, Users, FileText, Upload, LogOut, LayoutDashboard } from 'lucide-react';
 
@@ -15,11 +15,10 @@ const Layout = ({ role }: { role: 'student' | 'teacher' | 'admin' }) => {
     return (
       <Link
         to={to}
-        className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-          isActive
+        className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive
             ? 'bg-blue-50 text-blue-600'
             : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-        }`}
+          }`}
       >
         <Icon size={20} />
         <span className="font-medium">{label}</span>
