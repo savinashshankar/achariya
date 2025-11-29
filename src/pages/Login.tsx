@@ -1,118 +1,128 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, ArrowRight } from 'lucide-react';
+import { User, Lock, ChevronDown } from 'lucide-react';
+
+type UserRole = 'Principal' | 'Teacher' | 'Student';
 
 const Login = () => {
     const navigate = useNavigate();
-    const [role, setRole] = useState<'admin' | 'operations'>('admin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [selectedRole, setSelectedRole] = useState<UserRole>('Principal');
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock login - accept any input
-        if (role === 'admin') {
-            navigate('/dashboard');
-        } else {
-            navigate('/ops/dashboard');
-        }
+
+        const userData = {
+            role: selectedRole,
+            email,
+            teacherName: selectedRole === 'Teacher' ? 'Hari' : null,
+            studentId: selectedRole === 'Student' ? 'STU-1001' : null,
+            studentName: selectedRole === 'Student' ? 'Pranav R' : null,
+        };
+
+        localStorage.setItem('user', JSON.stringify(userData));
+        navigate('/dashboard');
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-                <div className="p-8 pb-0 text-center">
-                    <div className="w-16 h-16 bg-blue-700 rounded-lg mx-auto flex items-center justify-center text-white text-3xl font-bold mb-4 shadow-lg">
-                        A
-                    </div>
-                    <h1 className="text-2xl font-bold text-gray-800 mb-2">Achariya Unified Internal Portal</h1>
-                    <p className="text-gray-500 text-sm">Internal access for digital, admissions, and asset insights</p>
-                </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex flex-col items-center justify-center p-4">
+            {/* Large Centered Logo */}
+            <div className="mb-8 text-center">
+                <img
+                    src="/logo.jpg"
+                    alt="Achariya Logo"
+                    className="w-40 h-40 mx-auto mb-4 object-contain"
+                />
+                <h1 className="text-3xl font-bold text-gray-800">Achariya Learning Completion Portal</h1>
+                <p className="text-gray-600 mt-2">Track teacher and student progress</p>
+            </div>
 
-                <div className="p-8">
-                    <form onSubmit={handleLogin} className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Select Role</label>
-                            <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 rounded-lg">
-                                <button
-                                    type="button"
-                                    onClick={() => setRole('admin')}
-                                    className={`py-2 text-sm font-medium rounded-md transition-all ${role === 'admin'
-                                            ? 'bg-white text-blue-700 shadow-sm'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                >
-                                    Admin
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setRole('operations')}
-                                    className={`py-2 text-sm font-medium rounded-md transition-all ${role === 'operations'
-                                            ? 'bg-white text-blue-700 shadow-sm'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                >
-                                    Operations
-                                </button>
-                            </div>
+            {/* Login Card */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Sign In</h2>
+
+                <form onSubmit={handleLogin} className="space-y-6">
+                    {/* Role Selector */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Select Role
+                        </label>
+                        <div className="relative">
+                            <select
+                                value={selectedRole}
+                                onChange={(e) => setSelectedRole(e.target.value as UserRole)}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+                            >
+                                <option value="Principal">Principal</option>
+                                <option value="Teacher">Teacher</option>
+                                <option value="Student">Student</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
                         </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email or Username</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <User size={18} className="text-gray-400" />
-                                </div>
-                                <input
-                                    type="text"
-                                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                                    placeholder={role === 'admin' ? 'admin@achariya.in' : 'ops@achariya.in'}
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Lock size={18} className="text-gray-400" />
-                                </div>
-                                <input
-                                    type="password"
-                                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="w-full bg-blue-700 text-white py-2.5 rounded-lg hover:bg-blue-800 transition-colors font-medium flex items-center justify-center space-x-2 shadow-md hover:shadow-lg"
-                        >
-                            <span>Log In</span>
-                            <ArrowRight size={18} />
-                        </button>
-                    </form>
-
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                        <p className="text-xs font-semibold text-blue-800 mb-2 uppercase tracking-wider">Example Credentials</p>
-                        <div className="space-y-1 text-xs text-blue-700">
-                            <p><span className="font-medium">Admin:</span> admin@achariya.in / Admin123</p>
-                            <p><span className="font-medium">Operations:</span> ops@achariya.in / Ops123</p>
-                        </div>
-                    </div>
-
-                    <div className="mt-6 text-center">
-                        <p className="text-xs text-gray-400">
-                            Need help? Contact IT Support at <a href="mailto:support@achariya.in" className="text-blue-600 hover:underline">support@achariya.in</a>
+                        <p className="mt-1 text-xs text-gray-500">
+                            {selectedRole === 'Principal' && 'View all teachers and students across campuses'}
+                            {selectedRole === 'Teacher' && 'View your classes and student progress'}
+                            {selectedRole === 'Student' && 'View your course completion and scores'}
                         </p>
                     </div>
+
+                    {/* Email */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                        </label>
+                        <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder={`${selectedRole.toLowerCase()}@achariya.in`}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* Password */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Password
+                        </label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Enter your password"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
+                    >
+                        Sign In as {selectedRole}
+                    </button>
+                </form>
+
+                {/* Demo Hint */}
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <p className="text-xs text-blue-800 text-center">
+                        <strong>Demo Mode:</strong> Use any email/password combination to login
+                    </p>
                 </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-8 text-center text-gray-500 text-sm">
+                <p>© 2025 Achariya Group of Institutions</p>
             </div>
         </div>
     );
